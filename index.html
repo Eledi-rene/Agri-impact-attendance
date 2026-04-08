@@ -147,10 +147,18 @@ body::before {
 .t-input.flag-late  { border-color: rgba(232,106,106,0.7); color: var(--danger); }
 .t-input.flag-early { border-color: rgba(232,168,74,0.7);  color: var(--warn); }
 .t-input.input-error { border-color: rgba(232,106,106,0.9); background: rgba(232,106,106,0.06); }
-.day-card.is-absent .t-input { opacity: 0.2; pointer-events: none; }
+.day-card.is-absent .t-input, .day-card.is-holiday .t-input, .day-card.is-onfield .t-input { opacity: 0.2; pointer-events: none; }
+.day-card.is-holiday { background: rgba(100,160,232,0.04); border-color: rgba(100,160,232,0.25); }
+.day-card.is-onfield { background: rgba(180,126,232,0.04); border-color: rgba(180,126,232,0.25); }
+.day-toggles { display: flex; gap: 10px; align-items: center; }
 .absent-toggle { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
-.absent-toggle input[type=checkbox] { accent-color: var(--danger); width: 15px; height: 15px; cursor: pointer; }
+.absent-toggle input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; }
+.absent-toggle.toggle-absent input  { accent-color: var(--danger); }
+.absent-toggle.toggle-holiday input { accent-color: #7ab4e8; }
+.absent-toggle.toggle-onfield input { accent-color: #b87ee8; }
 .absent-toggle span { font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+.day-card.is-holiday { background: rgba(100,160,232,0.04); border-color: rgba(100,160,232,0.25); }
+.day-card.is-onfield { background: rgba(180,126,232,0.04); border-color: rgba(180,126,232,0.25); }
 
 /* REPORT */
 .report-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
@@ -168,10 +176,12 @@ body::before {
 .rc-avg-val { font-size: 15px; font-weight: 500; font-family: var(--font-mono); }
 .pips { display: flex; gap: 4px; }
 .pip { flex: 1; height: 26px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
-.pip.present { background: rgba(126,201,106,0.18); color: var(--accent); border: 1px solid rgba(126,201,106,0.35); }
-.pip.late    { background: rgba(232,168,74,0.15);  color: var(--warn);   border: 1px solid rgba(232,168,74,0.3); }
-.pip.absent  { background: rgba(232,106,106,0.1);  color: var(--danger); border: 1px solid rgba(232,106,106,0.25); }
-.pip.empty   { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+.pip.present  { background: rgba(126,201,106,0.18); color: var(--accent); border: 1px solid rgba(126,201,106,0.35); }
+.pip.late     { background: rgba(232,168,74,0.15);  color: var(--warn);   border: 1px solid rgba(232,168,74,0.3); }
+.pip.absent   { background: rgba(232,106,106,0.1);  color: var(--danger); border: 1px solid rgba(232,106,106,0.25); }
+.pip.empty    { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+.pip.holiday  { background: rgba(100,160,232,0.12); color: #7ab4e8; border: 1px solid rgba(100,160,232,0.3); }
+.pip.on-field { background: rgba(180,126,232,0.12); color: #b87ee8; border: 1px solid rgba(180,126,232,0.3); }
 
 /* EXTRAS */
 .extras-grid { display: grid; grid-template-columns: 240px 1fr; gap: 16px; align-items: start; }
@@ -208,6 +218,18 @@ body::before {
 .diff-ok     { color: var(--accent); background: rgba(126,201,106,0.1); border: 1px solid rgba(126,201,106,0.25); }
 .diff-late   { color: var(--danger); background: rgba(232,106,106,0.1); border: 1px solid rgba(232,106,106,0.25); }
 .rank-empty  { font-size: 12px; color: var(--muted); padding: 10px 0; }
+
+/* NON-RANKED GROUPS */
+.nonranked-section { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px; display: flex; flex-direction: column; gap: 14px; }
+.nonranked-group-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.nonranked-group-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.nonranked-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-radius: 5px; border: 1px solid var(--border); background: var(--surface2); gap: 10px; }
+.nonranked-name { font-size: 13px; color: var(--text); }
+.nonranked-role { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.nonranked-reason { font-size: 10px; padding: 2px 8px; border-radius: 3px; white-space: nowrap; font-weight: 500; }
+.reason-field   { color: #b87ee8; background: rgba(180,126,232,0.1); border: 1px solid rgba(180,126,232,0.25); }
+.reason-leave   { color: #7ab4e8; background: rgba(100,160,232,0.1); border: 1px solid rgba(100,160,232,0.25); }
+.reason-incompliant { color: var(--danger); background: rgba(232,106,106,0.08); border: 1px solid rgba(232,106,106,0.2); }
 
 /* SETTINGS */
 .settings-block { margin-bottom: 28px; max-width: 520px; }
@@ -411,7 +433,7 @@ async function dbPatch(table, params, body) {
 // ── STATE ─────────────────────────────────────────────────────────────────
 let state = {
   staff: [],
-  records: {}, // [staffId][dateStr] = { in, out, absent }
+  records: {}, // [staffId][dateStr] = { in, out, absent, holiday, onField }
   settings: { startTime: '08:00', endTime: '17:00', timeFormat: '24' },
   reportWeekOffset: 0,
 };
@@ -429,7 +451,7 @@ async function loadAll() {
   state.records = {};
   attRows.forEach(r => {
     if (!state.records[r.staff_id]) state.records[r.staff_id] = {};
-    state.records[r.staff_id][r.date] = { in: r.clock_in, out: r.clock_out, absent: r.absent };
+    state.records[r.staff_id][r.date] = { in: r.clock_in, out: r.clock_out, absent: r.absent, holiday: r.holiday || false, onField: r.on_field || false };
   });
 
   setLoadingMsg('Loading settings...');
@@ -474,11 +496,13 @@ async function saveStaffWeek() {
     const dateStr = ds(d);
     const inRaw   = document.getElementById(`in-${dateStr}`)?.value  || '';
     const outRaw  = document.getElementById(`out-${dateStr}`)?.value || '';
-    const absent  = document.querySelector(`#card-${dateStr} input[type=checkbox]`)?.checked || false;
-    const inParsed  = absent ? '' : parseTimeInput(inRaw);
-    const outParsed = absent ? '' : parseTimeInput(outRaw);
-    if (!absent && inRaw.trim()  && inParsed  === null) errors.push(`${dateStr} clock-in`);
-    if (!absent && outRaw.trim() && outParsed === null) errors.push(`${dateStr} clock-out`);
+    const absent  = document.querySelector(`#card-${dateStr} .cb-absent`)?.checked  || false;
+    const holiday = document.querySelector(`#card-${dateStr} .cb-holiday`)?.checked || false;
+    const onField = document.querySelector(`#card-${dateStr} .cb-onfield`)?.checked || false;
+    const inParsed  = (absent || holiday || onField) ? '' : parseTimeInput(inRaw);
+    const outParsed = (absent || holiday || onField) ? '' : parseTimeInput(outRaw);
+    if (!absent && !holiday && !onField && inRaw.trim()  && inParsed  === null) errors.push(`${dateStr} clock-in`);
+    if (!absent && !holiday && !onField && outRaw.trim() && outParsed === null) errors.push(`${dateStr} clock-out`);
     rows.push({
       id:       `${entry.staffId}_${dateStr}`,
       staff_id: entry.staffId,
@@ -486,10 +510,12 @@ async function saveStaffWeek() {
       clock_in:  inParsed  || '',
       clock_out: outParsed || '',
       absent,
+      holiday,
+      on_field: onField,
     });
     // update local state
     if (!state.records[entry.staffId]) state.records[entry.staffId] = {};
-    state.records[entry.staffId][dateStr] = { in: inParsed || '', out: outParsed || '', absent };
+    state.records[entry.staffId][dateStr] = { in: inParsed || '', out: outParsed || '', absent, holiday, onField };
   });
 
   try {
@@ -584,7 +610,7 @@ function toMins(t) {
 }
 
 function getRec(staffId, dateStr) {
-  return (state.records[staffId] && state.records[staffId][dateStr]) || { in:'', out:'', absent:false };
+  return (state.records[staffId] && state.records[staffId][dateStr]) || { in:'', out:'', absent:false, holiday:false, onField:false };
 }
 
 function minsToTime(m) {
@@ -645,7 +671,7 @@ function renderStaffList() {
   list.innerHTML = filtered.map(s => {
     const sel = entry.staffId === s.id ? ' selected' : '';
     const hasSavedData = entry.weekStart
-      ? weekDates(entry.weekStart).some(d => { const r = getRec(s.id, ds(d)); return r.in || r.out || r.absent; })
+      ? weekDates(entry.weekStart).some(d => { const r = getRec(s.id, ds(d)); return r.in || r.out || r.absent || r.holiday || r.onField; })
       : false;
     return `<div class="staff-item${sel}" onclick="selectStaff('${s.id}')">
       <div><div class="si-name">${s.name}</div><div class="si-role">${s.role}</div></div>
@@ -692,10 +718,10 @@ function renderWeekForm() {
   days.forEach((d, i) => {
     const dateStr = ds(d);
     const rec = getRec(entry.staffId, dateStr);
-    const absCls  = rec.absent ? ' is-absent' : '';
+    const absCls  = rec.absent ? ' is-absent' : rec.holiday ? ' is-holiday' : rec.onField ? ' is-onfield' : '';
     const inFlag  = rec.in  && toMins(rec.in)  > toMins(state.settings.startTime) ? ' flag-late'  : '';
     const outFlag = rec.out && toMins(rec.out) < toMins(state.settings.endTime)   ? ' flag-early' : '';
-    const dis = rec.absent ? 'disabled' : '';
+    const dis = (rec.absent || rec.holiday || rec.onField) ? 'disabled' : '';
     html += `<div class="day-card${absCls}" id="card-${dateStr}">
       <div><div class="dc-dayname">${DAY_NAMES[i]}</div><div class="dc-date">${d.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div></div>
       <div class="dc-field">
@@ -706,10 +732,20 @@ function renderWeekForm() {
         <div class="dc-label out">Clock Out</div>
         <input class="t-input${outFlag}" type="text" id="out-${dateStr}" value="${displayTime(rec.out)}" placeholder="${ph}" ${dis} oninput="liveFlag(this,'out')" autocomplete="off">
       </div>
-      <label class="absent-toggle">
-        <input type="checkbox" ${rec.absent ? 'checked' : ''} onchange="toggleAbsent('${dateStr}',this)">
-        <span>Absent</span>
-      </label>
+      <div class="day-toggles">
+        <label class="absent-toggle toggle-absent">
+          <input type="checkbox" class="cb-absent" ${rec.absent ? 'checked' : ''} onchange="toggleStatus('${dateStr}','absent',this)">
+          <span>Absent</span>
+        </label>
+        <label class="absent-toggle toggle-holiday">
+          <input type="checkbox" class="cb-holiday" ${rec.holiday ? 'checked' : ''} onchange="toggleStatus('${dateStr}','holiday',this)">
+          <span>Leave</span>
+        </label>
+        <label class="absent-toggle toggle-onfield">
+          <input type="checkbox" class="cb-onfield" ${rec.onField ? 'checked' : ''} onchange="toggleStatus('${dateStr}','onfield',this)">
+          <span>On-Field</span>
+        </label>
+      </div>
     </div>`;
   });
 
@@ -736,12 +772,28 @@ function liveFlag(el, type) {
   else                el.classList.toggle('flag-early', parsed !== null && toMins(parsed) < toMins(state.settings.endTime));
 }
 
-function toggleAbsent(dateStr, cb) {
-  const card = document.getElementById(`card-${dateStr}`);
-  const inEl = document.getElementById(`in-${dateStr}`);
-  const outEl= document.getElementById(`out-${dateStr}`);
-  card.classList.toggle('is-absent', cb.checked);
-  inEl.disabled = outEl.disabled = cb.checked;
+function toggleStatus(dateStr, type, cb) {
+  const card    = document.getElementById(`card-${dateStr}`);
+  const inEl    = document.getElementById(`in-${dateStr}`);
+  const outEl   = document.getElementById(`out-${dateStr}`);
+  const cbAbs   = card.querySelector('.cb-absent');
+  const cbHol   = card.querySelector('.cb-holiday');
+  const cbField = card.querySelector('.cb-onfield');
+
+  // Mutual exclusivity — uncheck the other two when one is checked
+  if (cb.checked) {
+    if (type !== 'absent')  cbAbs.checked   = false;
+    if (type !== 'holiday') cbHol.checked   = false;
+    if (type !== 'onfield') cbField.checked = false;
+  }
+
+  const isLocked = cbAbs.checked || cbHol.checked || cbField.checked;
+  inEl.disabled  = isLocked;
+  outEl.disabled = isLocked;
+
+  card.classList.toggle('is-absent',  cbAbs.checked);
+  card.classList.toggle('is-holiday', cbHol.checked);
+  card.classList.toggle('is-onfield', cbField.checked);
   setUnsaved(true);
 }
 
@@ -759,14 +811,26 @@ function renderReport() {
   const today = new Date(); today.setHours(0,0,0,0);
 
   const staffStats = state.staff.map(s => {
-    let present = 0, absent = 0, late = 0, early = 0;
+    let present = 0, absent = 0, late = 0, early = 0, holiday = 0, onField = 0;
     const inTimes = [];
 
     const pips = days.map((d, i) => {
       const dateStr  = ds(d);
       const rec      = getRec(s.id, dateStr);
       const isFuture = d > today;
-      if (rec.absent) { absent++; return `<div class="pip absent" title="${DAY_SHORT[i]} \u2013 Absent">${DAY_SHORT[i]}</div>`; }
+
+      if (rec.absent) {
+        absent++;
+        return `<div class="pip absent" title="${DAY_SHORT[i]} \u2013 Absent">${DAY_SHORT[i]}</div>`;
+      }
+      if (rec.holiday) {
+        holiday++;
+        return `<div class="pip holiday" title="${DAY_SHORT[i]} \u2013 Holiday / Leave">${DAY_SHORT[i]}</div>`;
+      }
+      if (rec.onField) {
+        onField++;
+        return `<div class="pip on-field" title="${DAY_SHORT[i]} \u2013 On-Field">${DAY_SHORT[i]}</div>`;
+      }
       if (rec.in) {
         present++; inTimes.push(toMins(rec.in));
         const isLate  = toMins(rec.in) > toMins(state.settings.startTime);
@@ -780,11 +844,11 @@ function renderReport() {
       return `<div class="pip ${isFuture?'empty':'absent'}" title="${DAY_SHORT[i]}">${DAY_SHORT[i]}</div>`;
     }).join('');
 
-    return { s, present, absent, late, early, avgIn: avgMins(inTimes), pips };
+    return { s, present, absent, late, early, holiday, onField, avgIn: avgMins(inTimes), pips };
   });
 
   // Individual cards
-  document.getElementById('reportGrid').innerHTML = staffStats.map(({ s, present, absent, late, early, avgIn, pips }) => {
+  document.getElementById('reportGrid').innerHTML = staffStats.map(({ s, present, absent, late, early, holiday, onField, avgIn, pips }) => {
     const avgInStr  = avgIn !== null ? minsToTime(avgIn) : '\u2013';
     const avgInFlag = avgIn !== null && avgIn > toMins(state.settings.startTime) ? 'rc-val w' : 'rc-val g';
     return `<div class="report-card">
@@ -794,6 +858,8 @@ function renderReport() {
         <div><div class="rc-val r">${absent}</div><div class="rc-lbl">Absent</div></div>
         <div><div class="rc-val w">${late}</div><div class="rc-lbl">Late In</div></div>
         <div><div class="rc-val w">${early}</div><div class="rc-lbl">Early Out</div></div>
+        <div><div class="rc-val" style="color:#7ab4e8">${holiday}</div><div class="rc-lbl">Leave</div></div>
+        <div><div class="rc-val" style="color:#b87ee8">${onField}</div><div class="rc-lbl">On-Field</div></div>
       </div>
       <div class="rc-avg-row">
         <span class="rc-avg-lbl">Avg clock-in</span>
@@ -808,11 +874,39 @@ function renderReport() {
   const groupAvgStr = groupAvg !== null ? minsToTime(groupAvg) : 'No data';
   const groupFlag   = groupAvg !== null && groupAvg > toMins(state.settings.startTime) ? 'warn' : 'accent';
 
-  // Unified ranking
-  const ranked = staffStats.filter(x => x.present > 0).sort((a,b) =>
-    a.late - b.late || (a.avgIn ?? 999) - (b.avgIn ?? 999) || a.absent - b.absent
-  );
+  // ── RANKING LOGIC ──────────────────────────────────────────────────────────
+  // Entry = present + on-field + holiday/leave (all count toward minimum)
+  // Average clock-in = present days only (on-field and holiday excluded)
+  // Minimum 3 entries to be ranked
+  const MIN_ENTRIES = 3;
+
+  const ranked    = [];
+  const fieldWork = [];   // ≥1 on-field entry but < MIN_ENTRIES total entries
+  const verifiedAbsence = []; // only holiday/leave entries, < MIN_ENTRIES total
+  const incompliant = []; // < MIN_ENTRIES entries and no valid reason
+
+  staffStats.forEach(x => {
+    const totalEntries = x.present + x.onField + x.holiday;
+    if (totalEntries >= MIN_ENTRIES) {
+      ranked.push(x);
+    } else {
+      // categorise non-ranked
+      if (x.onField > 0 && x.holiday === 0) {
+        fieldWork.push(x);
+      } else if (x.holiday > 0 && x.onField === 0) {
+        verifiedAbsence.push(x);
+      } else if (x.onField > 0 && x.holiday > 0) {
+        fieldWork.push(x); // mixed — lean toward field work
+      } else {
+        incompliant.push(x);
+      }
+    }
+  });
+
+  // Sort ranked: fewest late days → earliest avg clock-in → fewest absences
+  ranked.sort((a, b) => a.late - b.late || (a.avgIn ?? 999) - (b.avgIn ?? 999) || a.absent - b.absent);
   window._rankData = ranked;
+  window._nonRanked = { fieldWork, verifiedAbsence, incompliant };
 
   document.getElementById('reportExtras').innerHTML = `
     <div class="extras-grid">
@@ -826,7 +920,7 @@ function renderReport() {
         <div class="rank-header">
           <div>
             <div class="extra-title">Attendance Ranking</div>
-            <div class="extra-subtitle">Best to worst &mdash; late days, avg clock-in, then absences</div>
+            <div class="extra-subtitle">Min. 3 entries &mdash; fewest late days, then avg clock-in</div>
           </div>
           <div class="rank-filters">
             <button class="rank-filter active" data-filter="all" onclick="applyRankFilter(this)">All Staff</button>
@@ -834,16 +928,18 @@ function renderReport() {
           </div>
         </div>
         <div class="rank-list" id="rankList"></div>
+        <div id="nonRankedSection"></div>
       </div>
     </div>`;
 
   renderRankList(ranked);
+  renderNonRanked(window._nonRanked);
 }
 
 function renderRankList(list) {
   const el = document.getElementById('rankList');
   if (!el) return;
-  if (!list.length) { el.innerHTML = `<div class="rank-empty">No data for this week yet.</div>`; return; }
+  if (!list.length) { el.innerHTML = `<div class="rank-empty">No ranked staff for this week.</div>`; return; }
   el.innerHTML = list.map((x, i) => {
     const rank   = i + 1;
     const medal  = rank === 1 ? '&#127941;' : rank === 2 ? '&#129352;' : rank === 3 ? '&#129353;' : '';
@@ -856,7 +952,9 @@ function renderRankList(list) {
       <div class="rank-info"><span class="rank-name">${x.s.name}</span><span class="rank-role">${x.s.role}</span></div>
       <div class="rank-chips">
         ${isLate ? `<span class="rank-chip chip-late">&#128337; ${x.late} late</span>` : `<span class="rank-chip chip-ok">&#10003; ${x.present} on time</span>`}
-        ${x.absent > 0 ? `<span class="rank-chip chip-absent">&#8212; ${x.absent} absent</span>` : ''}
+        ${x.absent  > 0 ? `<span class="rank-chip chip-absent">&#8212; ${x.absent} absent</span>` : ''}
+        ${x.onField > 0 ? `<span class="rank-chip" style="color:#b87ee8;background:rgba(180,126,232,0.1);border:1px solid rgba(180,126,232,0.25)">&#128205; ${x.onField} field</span>` : ''}
+        ${x.holiday > 0 ? `<span class="rank-chip" style="color:#7ab4e8;background:rgba(100,160,232,0.1);border:1px solid rgba(100,160,232,0.25)">&#9729; ${x.holiday} leave</span>` : ''}
       </div>
       <div class="rank-right">
         <span class="rank-time">${avgStr}</span>
@@ -866,11 +964,48 @@ function renderRankList(list) {
   }).join('');
 }
 
+function renderNonRanked({ fieldWork, verifiedAbsence, incompliant }) {
+  const el = document.getElementById('nonRankedSection');
+  if (!el) return;
+  const hasAny = fieldWork.length || verifiedAbsence.length || incompliant.length;
+  if (!hasAny) { el.innerHTML = ''; return; }
+
+  const makeRows = (list) => list.map(x => `
+    <div class="nonranked-row">
+      <div><div class="nonranked-name">${x.s.name}</div><div class="nonranked-role">${x.s.role}</div></div>
+      <div style="font-size:10px;color:var(--muted)">${x.present + x.onField + x.holiday} / 3 entries</div>
+    </div>`).join('');
+
+  let html = `<div class="nonranked-section">`;
+  if (fieldWork.length) {
+    html += `<div>
+      <div class="nonranked-group-label"><span class="nonranked-reason reason-field">&#128205; Field Work</span></div>
+      ${makeRows(fieldWork)}
+    </div>`;
+  }
+  if (verifiedAbsence.length) {
+    html += `<div>
+      <div class="nonranked-group-label"><span class="nonranked-reason reason-leave">&#9729; Verified Absence</span></div>
+      ${makeRows(verifiedAbsence)}
+    </div>`;
+  }
+  if (incompliant.length) {
+    html += `<div>
+      <div class="nonranked-group-label"><span class="nonranked-reason reason-incompliant">&#9888; Incompliant</span></div>
+      ${makeRows(incompliant)}
+    </div>`;
+  }
+  html += `</div>`;
+  el.innerHTML = html;
+}
+
 function applyRankFilter(btn) {
   document.querySelectorAll('.rank-filter').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   const data = window._rankData || [];
   renderRankList(btn.dataset.filter === 'absent' ? data.filter(x => x.absent > 0) : data);
+  // Non-ranked section is not affected by the filter — always visible
+  renderNonRanked(window._nonRanked || { fieldWork: [], verifiedAbsence: [], incompliant: [] });
 }
 
 function changeReportWeek(dir) { state.reportWeekOffset += dir; renderReport(); }
@@ -889,16 +1024,20 @@ function renderManageList() {
 function exportCSV() {
   const monday = getMondayForOffset(state.reportWeekOffset);
   const days   = weekDates(monday);
-  const rows   = [['Staff','Role','Date','Day','Clock In','Clock Out','Absent','Late Arrival','Early Departure']];
+  const rows   = [['Staff','Role','Date','Day','Clock In','Clock Out','Absent','Holiday/Leave','On-Field','Late Arrival','Early Departure']];
   state.staff.forEach(s => {
     days.forEach((d, i) => {
       const dateStr = ds(d), rec = getRec(s.id, dateStr);
-      const isLate  = !rec.absent && rec.in  && toMins(rec.in)  > toMins(state.settings.startTime) ? 'Yes' : 'No';
-      const isEarly = !rec.absent && rec.out && toMins(rec.out) < toMins(state.settings.endTime)   ? 'Yes' : 'No';
+      const isLate  = !rec.absent && !rec.holiday && !rec.onField && rec.in  && toMins(rec.in)  > toMins(state.settings.startTime) ? 'Yes' : 'No';
+      const isEarly = !rec.absent && !rec.holiday && !rec.onField && rec.out && toMins(rec.out) < toMins(state.settings.endTime)   ? 'Yes' : 'No';
+      const status  = rec.absent ? 'Absent' : rec.holiday ? 'Holiday/Leave' : rec.onField ? 'On-Field' : (rec.in || '-');
       rows.push([s.name, s.role, dateStr, DAY_SHORT[i],
-        rec.absent ? 'Absent' : (rec.in || '-'),
-        rec.absent ? '-' : (rec.out || '-'),
-        rec.absent ? 'Yes' : 'No', isLate, isEarly]);
+        status,
+        (rec.absent || rec.holiday || rec.onField) ? '-' : (rec.out || '-'),
+        rec.absent  ? 'Yes' : 'No',
+        rec.holiday ? 'Yes' : 'No',
+        rec.onField ? 'Yes' : 'No',
+        isLate, isEarly]);
     });
   });
   dlCSV(rows, `attendance_${ds(days[0])}.csv`);
@@ -906,13 +1045,19 @@ function exportCSV() {
 }
 
 function exportAllCSV() {
-  const rows = [['Staff','Role','Date','Clock In','Clock Out','Absent','Late','Early Departure']];
+  const rows = [['Staff','Role','Date','Clock In','Clock Out','Absent','Holiday/Leave','On-Field','Late','Early Departure']];
   state.staff.forEach(s => {
     const recs = state.records[s.id] || {};
     Object.entries(recs).sort().forEach(([dateStr, rec]) => {
-      const isLate  = !rec.absent && rec.in  && toMins(rec.in)  > toMins(state.settings.startTime) ? 'Yes' : 'No';
-      const isEarly = !rec.absent && rec.out && toMins(rec.out) < toMins(state.settings.endTime)   ? 'Yes' : 'No';
-      rows.push([s.name, s.role, dateStr, rec.absent ? 'Absent' : (rec.in || '-'), rec.absent ? '-' : (rec.out || '-'), rec.absent ? 'Yes' : 'No', isLate, isEarly]);
+      const isLate  = !rec.absent && !rec.holiday && !rec.onField && rec.in  && toMins(rec.in)  > toMins(state.settings.startTime) ? 'Yes' : 'No';
+      const isEarly = !rec.absent && !rec.holiday && !rec.onField && rec.out && toMins(rec.out) < toMins(state.settings.endTime)   ? 'Yes' : 'No';
+      const status  = rec.absent ? 'Absent' : rec.holiday ? 'Holiday/Leave' : rec.onField ? 'On-Field' : (rec.in || '-');
+      rows.push([s.name, s.role, dateStr, status,
+        (rec.absent || rec.holiday || rec.onField) ? '-' : (rec.out || '-'),
+        rec.absent  ? 'Yes' : 'No',
+        rec.holiday ? 'Yes' : 'No',
+        rec.onField ? 'Yes' : 'No',
+        isLate, isEarly]);
     });
   });
   dlCSV(rows, 'attendance_all_records.csv');
